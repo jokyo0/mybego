@@ -8,11 +8,12 @@ import { sleep } from '@/lib/bots/bing/utils'
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     let count = 0
-   const headers = createHeaders({
+
+    do {
+         const headers = createHeaders({
       ...req.cookies,
       BING_IP: randomIP()
     })
-    do {
       const endpoints = [req.headers['x-endpoint'], ...(process.env.ENDPOINT || '').split(','), 'www.bing.com'].filter(Boolean)
       const endpoint = endpoints[count % endpoints.length]
       const { conversationId } = req.query
