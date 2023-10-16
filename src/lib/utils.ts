@@ -41,9 +41,58 @@ export function createChunkDecoder() {
   }
 }
 
-export function muid() {
-  return md5(new imei().random()).toUpperCase()
+
+function generateRandomString(length: number): string {
+    const charset = "ABCDEF1234567890";
+    let result = "";
+    for (let i = 0; i < length; i++) {
+        result += charset[Math.floor(Math.random() * charset.length)];
+    }
+    return result;
 }
+
+const MUID_ADDRESSES: string[] = [
+    "074AD7F106536BC6392FC4C907CA6AEA",
+    "019546D2D9086B1C238C555FD84B6A2A",
+    "226B78B3878768AE2C6A6B3E864069FA",
+    "1BD4F74902356D8C047AE4C403F26C19",
+    "2BA6A324A2FC66D834B4B0A9A34F6722",
+    "22897C804CF66A462F436F0D4DB56B13",
+    "3B06D20557436C4D1D98C18856F06DC9",
+    "0D0604C3DD7469723A9B174EDC3768CD",
+    "3FE6DC08443C6B280FFBCF8545FB6AFA",
+    // ...
+    "06FCC9A5B8C26DD20FBEDA3CB9C56CFB",
+    "38436E625858684411327DFB595F69B2",
+    "0DF624B60F646DE8128F372F0ED36C4A",
+    // 添加更多的IP地址1010
+  "0910C3B39ACE66680ADBD0159B79676D",
+  "0519815E31826D6120A092F830326CA6",
+  "0C9F7D214A2F64B608DC6E874B3D6546",
+  "2B585366DE6B6BBF26E140C0DFDC6A58",
+  "2DCF60057BA4687B013473A37A136987",
+  "1F1FEE044AA561781138FDA24B1560E0",
+  "00C32CE405E669FF2DD53F4204516824",
+  "26A43BC52576668B12832863246467F5",
+  "0596B4D0238D6FC33990A776223A6E76",
+  "0A57DF53D7706BFB1456CCF5D6C76A2A",
+];
+
+function getRandomMUID(): string {
+    const timestamp = Date.now();
+    const randomIndex = Math.floor(Math.random() * MUID_ADDRESSES.length * timestamp);
+    const IPSTR = MUID_ADDRESSES[randomIndex % MUID_ADDRESSES.length];
+    const trimmedIPStr = IPSTR.slice(0, IPSTR.length - 2);
+    const randomString = generateRandomString(2);
+    const USER_MUID = trimmedIPStr + randomString;
+    return USER_MUID;
+}
+
+export function muid() {
+//  return md5(new imei().random()).toUpperCase()
+    return getRandomMUID()
+}
+
 
 export function random(start: number, end: number) {
   return start + Math.floor(Math.random() * (end - start))
@@ -162,7 +211,7 @@ export function mockUser(cookies: Partial<{ [key: string]: string }>) {
     'User-Agent': ua!,
     'x-ms-useragent': 'azsdk-js-api-client-factory/1.0.0-beta.1 core-rest-pipeline/1.10.3 OS/Win32',
     'referer': 'https://www.bing.com/search?showconv=1&sendquery=1&q=Bing%20AI&form=MY02CJ&OCID=MY02CJ&OCID=MY02CJ&pl=launch',
-    cookie: `_U=${_U || defaultUID}; MUID=${MUID || randomString(32)}`,
+    cookie: `_U=${_U || defaultUID}; MUID=${MUID || muid()}`,
   }
 }
 
